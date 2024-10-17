@@ -1,0 +1,18 @@
+// Carregar a coleção de Desmatamento (MapBiomas)
+var desmatamento = ee.Image('projects/mapbiomas-public/assets/brazil/lulc/collection9/mapbiomas_collection90_deforestation_secondary_vegetation_v1')
+  .select('deforestation_sv_2023');
+
+// Define a área de interesse como o Brasil
+var brasil = ee.FeatureCollection('FAO/GAUL/2015/level0')
+  .filter(ee.Filter.eq('ADM0_NAME', 'Brazil'));
+
+// Exporta a imagem de Desmatamento para o Google Drive
+Export.image.toDrive({
+  image: desmatamento.clip(brasil),
+  description: 'desmatamento_2023',
+  folder: 'WRI',
+  region: brasil.geometry(),
+  scale: 30,  // Resolução em metros
+  maxPixels: 1e13,
+  fileFormat: 'GeoTIFF'
+});
